@@ -445,7 +445,7 @@ header.top{display:flex;flex-direction:column;align-items:center;justify-content
 </div>
 
 <script>
-const DATA = [{"name":"tallyg","points":92.2,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":["!  Lìo"],"coLeaderAvatars":["https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128"]}] || [];
+const DATA = [{"name":"tallyg","points":93.4,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":["!  Lìo"],"coLeaderAvatars":["https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128"]}] || [];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = id => document.getElementById(id);
 
@@ -623,21 +623,14 @@ for (let i=0;i<40;i++) S.push({x:Math.random()*W, y:Math.random()*H, r:Math.rand
   requestAnimationFrame(loop);
 })();
 
-/* live refresh: fetch fresh data via GitHub API + ETag (304s don't hit rate limit) */
-const DATA_URL = 'https://api.github.com/repos/tallyhell/rovegroups/contents/data/data.json?ref=data';
+/* live refresh: fetch data via jsDelivr (no rate limit, auto-purges on push) every 60s */
+const DATA_URL = 'https://cdn.jsdelivr.net/gh/tallyhell/rovegroups@data/data/data.json';
 let liveLoaded = false;
-let dataEtag = null;
 async function refreshData(){
   try {
-    const h = { Accept: 'application/vnd.github+json' };
-    if (dataEtag) h['If-None-Match'] = dataEtag;
-    const r = await fetch(DATA_URL, { cache: 'no-store', headers: h });
-    if (r.status === 304) return;
+    const r = await fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if (!r.ok) return;
-    const j = await r.json();
-    dataEtag = r.headers.get('etag');
-    const b64 = j.content.replace(/-/g, '+').replace(/_/g, '/');
-    const next = JSON.parse(decodeURIComponent(escape(atob(b64))));
+    const next = await r.json();
     if (!Array.isArray(next)) return;
     DATA.length = 0;
     DATA.push.apply(DATA, next);
@@ -655,7 +648,7 @@ async function init(){
   setTimeout(refreshData, 3000);
 }
 init();
-setInterval(refreshData, 30000);
+setInterval(refreshData, 60000);
 </script>
 </body>
 </html>
