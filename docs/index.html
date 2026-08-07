@@ -445,7 +445,7 @@ header.top{display:flex;flex-direction:column;align-items:center;justify-content
 </div>
 
 <script>
-const DATA = [{"name":"tallyg","points":102.3,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]},{"name":"<@1194730525932404826>","points":2.85,"icon":{"emoji":"<:7pink:1516176696921817209>","image":"https://cdn.discordapp.com/emojis/1516176696921817209.png?size=128"},"members":1,"leaderName":"!  Lìo","leaderAvatar":"https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]}] || [];
+const DATA = [{"name":"tallyg","points":103.2,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]},{"name":"<@1194730525932404826>","points":3.3,"icon":{"emoji":"<:7pink:1516176696921817209>","image":"https://cdn.discordapp.com/emojis/1516176696921817209.png?size=128"},"members":1,"leaderName":"!  Lìo","leaderAvatar":"https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]}] || [];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = id => document.getElementById(id);
 
@@ -624,7 +624,7 @@ for (let i=0;i<40;i++) S.push({x:Math.random()*W, y:Math.random()*H, r:Math.rand
 })();
 
 /* live refresh: fetch data from local Tailscale server (instant, no cache) every 60s */
-const API_URL = 'https://non.tailcdbd26.ts.net/data.json';
+const API_URL = 'https://rovegroups.tailcdbd26.ts.net/data.json';
 const RAW_URL = 'https://raw.githubusercontent.com/tallyhell/rovegroups/data/data/data.json';
 let liveLoaded = false;
 let dataEtag = null;
