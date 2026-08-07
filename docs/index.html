@@ -445,7 +445,7 @@ header.top{display:flex;flex-direction:column;align-items:center;justify-content
 </div>
 
 <script>
-const DATA = [{"name":"tallyg","points":100.5,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]},{"name":"<@1194730525932404826>","points":1.95,"icon":{"emoji":"<:7pink:1516176696921817209>","image":"https://cdn.discordapp.com/emojis/1516176696921817209.png?size=128"},"members":1,"leaderName":"!  Lìo","leaderAvatar":"https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]}] || [];
+const DATA = [{"name":"tallyg","points":102.3,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]},{"name":"<@1194730525932404826>","points":2.85,"icon":{"emoji":"<:7pink:1516176696921817209>","image":"https://cdn.discordapp.com/emojis/1516176696921817209.png?size=128"},"members":1,"leaderName":"!  Lìo","leaderAvatar":"https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128","coLeaderNames":[],"coLeaderAvatars":[]}] || [];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = id => document.getElementById(id);
 
@@ -623,30 +623,49 @@ for (let i=0;i<40;i++) S.push({x:Math.random()*W, y:Math.random()*H, r:Math.rand
   requestAnimationFrame(loop);
 })();
 
-/* live refresh: fetch data from GitHub raw (data branch) every 60s */
-const DATA_URL = 'https://raw.githubusercontent.com/tallyhell/rovegroups/data/data/data.json';
+/* live refresh: fetch data from local Tailscale server (instant, no cache) every 60s */
+const API_URL = 'https://non.tailcdbd26.ts.net/data.json';
+const RAW_URL = 'https://raw.githubusercontent.com/tallyhell/rovegroups/data/data/data.json';
 let liveLoaded = false;
-async function refreshData(){
+let dataEtag = null;
+function b64ToJson(b64){
+  const bin = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+async function fetchData(){
   try {
-    const r = await fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    const r = await fetch(API_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if (r.ok) {
       const next = await r.json();
       if (Array.isArray(next)) {
         DATA.length = 0;
         DATA.push.apply(DATA, next);
+        return true;
       }
     }
-    if (!liveLoaded) {
-      liveLoaded = true;
-      document.body.classList.remove('live-loading');
+  } catch (e) {}
+  try {
+    const r = await fetch(RAW_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) {
+      const next = await r.json();
+      if (Array.isArray(next)) {
+        DATA.length = 0;
+        DATA.push.apply(DATA, next);
+        return true;
+      }
     }
-    render();
-  } catch (e) {
-    if (!liveLoaded) {
-      liveLoaded = true;
-      document.body.classList.remove('live-loading');
-    }
+  } catch (e) {}
+  return false;
+}
+async function refreshData(){
+  await fetchData();
+  if (!liveLoaded) {
+    liveLoaded = true;
+    document.body.classList.remove('live-loading');
   }
+  render();
 }
 
 async function init(){
