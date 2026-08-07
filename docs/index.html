@@ -27,6 +27,11 @@ body{
   background:var(--bg-0);color:var(--ink);font-family:var(--font-b);
   min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
 }
+body.live-loading .wrap{opacity:0;}
+body.live-loading::after{
+  content:'جارِ التحديث…';position:fixed;inset:0;display:flex;align-items:center;
+  justify-content:center;color:var(--cy-3);font-size:18px;letter-spacing:.05em;
+}
 ::selection{background:var(--cy-3);color:#fff;}
 ::-webkit-scrollbar{width:10px;}
 ::-webkit-scrollbar-track{background:var(--bg-0);}
@@ -399,7 +404,7 @@ header.top{display:flex;flex-direction:column;align-items:center;justify-content
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s !important;transition-duration:.001s !important;}}
 </style>
 </head>
-<body>
+<body class="live-loading">
 
 <div class="bg-fx"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
 <canvas id="spark"></canvas>
@@ -440,7 +445,7 @@ header.top{display:flex;flex-direction:column;align-items:center;justify-content
 </div>
 
 <script>
-const DATA = [{"name":"tallyg","points":65.9,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":["!  Lìo"],"coLeaderAvatars":["https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128"]}] || [];
+const DATA = [{"name":"tallyg","points":69.35,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":["!  Lìo"],"coLeaderAvatars":["https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128"]}] || [];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = id => document.getElementById(id);
 
@@ -618,22 +623,31 @@ for (let i=0;i<40;i++) S.push({x:Math.random()*W, y:Math.random()*H, r:Math.rand
   requestAnimationFrame(loop);
 })();
 
-render();
-
 /* live refresh: fetch data from GitHub raw CDN (no API rate limit) every 5s */
 const DATA_URL = 'https://raw.githubusercontent.com/tallyhell/GR/main/data/data.json';
+let liveLoaded = false;
 async function refreshData(){
   try {
     const r = await fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if (!r.ok) return;
     const next = await r.json();
-    if (Array.isArray(next) && JSON.stringify(next) !== JSON.stringify(DATA)) {
-      DATA.length = 0;
-      DATA.push.apply(DATA, next);
-      render();
+    if (!Array.isArray(next)) return;
+    DATA.length = 0;
+    DATA.push.apply(DATA, next);
+    if (!liveLoaded) {
+      liveLoaded = true;
+      document.body.classList.remove('live-loading');
     }
+    render();
   } catch (e) {}
 }
+
+async function init(){
+  render();
+  await refreshData();
+  setTimeout(refreshData, 3000);
+}
+init();
 setInterval(refreshData, 5000);
 </script>
 </body>
