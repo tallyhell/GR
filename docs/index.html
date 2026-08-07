@@ -445,7 +445,7 @@ header.top{display:flex;flex-direction:column;align-items:center;justify-content
 </div>
 
 <script>
-const DATA = [{"name":"tallyg","points":91.6,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":["!  Lìo"],"coLeaderAvatars":["https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128"]}] || [];
+const DATA = [{"name":"tallyg","points":92.2,"icon":{"emoji":"<:watd:1528918834830905454>","image":"https://cdn.discordapp.com/emojis/1528918834830905454.png?size=128"},"members":3,"leaderName":"tally.","leaderAvatar":"https://cdn.discordapp.com/avatars/309092044637470721/509af97298e0af8ad13bcc29367593e1.webp?size=128","coLeaderNames":["!  Lìo"],"coLeaderAvatars":["https://cdn.discordapp.com/avatars/1194730525932404826/03bfd4ac493abede2aaecca98d553d8f.webp?size=128"]}] || [];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = id => document.getElementById(id);
 
@@ -624,7 +624,7 @@ for (let i=0;i<40;i++) S.push({x:Math.random()*W, y:Math.random()*H, r:Math.rand
 })();
 
 /* live refresh: fetch fresh data via GitHub API + ETag (304s don't hit rate limit) */
-const DATA_URL = 'https://api.github.com/repos/tallyhell/rovegroups/contents/data/data.json';
+const DATA_URL = 'https://api.github.com/repos/tallyhell/rovegroups/contents/data/data.json?ref=data';
 let liveLoaded = false;
 let dataEtag = null;
 async function refreshData(){
